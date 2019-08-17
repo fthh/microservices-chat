@@ -9,6 +9,8 @@ class Channel:
         for ws in self._web_sockets:
             if ws == socket:
                 continue
+            if ws.closed:
+                continue
             await ws.send_str(payload)
 
     def __init__(self):

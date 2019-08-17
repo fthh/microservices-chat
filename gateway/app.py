@@ -2,7 +2,8 @@ import asyncio
 import os
 import json
 import aiohttp.web
-from channel import *
+from channel import Channel
+from DAL.messages import publish_new_message
 
 HOST = os.getenv('HOST', '0.0.0.0')
 PORT = int(os.getenv('PORT', 8001))
@@ -18,6 +19,7 @@ async def websocket_handler(request):
     async for msg in ws:
         if msg.type == aiohttp.WSMsgType.TEXT:
             data = json.loads(msg.data)
+            await publish_new_message(data['user'], data['text'])
             await channel.broadcast(ws, msg.data)
 
     return ws

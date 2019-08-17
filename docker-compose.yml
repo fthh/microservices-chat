@@ -1,13 +1,46 @@
 version: '3'
 
+volumes:
+  postgres_expa_messages:
+
 services:
-  
+  rabbit:
+    image: rabbitmq:3.7.17
+    restart: always
+
+  storage_db:
+    image: postgres:10.1-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      PGDATA: /data/postgres
+    volumes:
+      - postgres_expa_messages:/data/postgres
+
+  storage:
+    build: storage/.
+    env_file: .env
+    environment:
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DEBUG: 'true'
+    restart: always
+    container_name: expa_store
+    command: python app.py migrate
+    depends_on:
+      - storage_db
+      - rabbit
+
   gateway:
     build: gateway/.
     container_name: expa_gateway
     command: python app.py
+    restart: always
     env_file: .env
-    environment:
-      DEBUG: 'true'
+    depends_on:
+      - rabbit
     ports:
       - "8001:8001"
