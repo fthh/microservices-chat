@@ -3,6 +3,13 @@ import sys
 from migrations import *
 from DAL.connect import create_db_connect, create_rabbit_connect
 from DAL.messages import insert_new_message
+import DAL.proto.protoc_out.message_pb2 as proto
+
+
+def deserialize(raw_data):
+    message = proto.Message()
+    message.ParseFromString(raw_data)
+    return message.user, message.message
 
 
 async def rabbit_consumer(conn, db_conn):
@@ -16,11 +23,7 @@ async def rabbit_consumer(conn, db_conn):
         async with queue.iterator() as queue_iter:
             async for message in queue_iter:
                 async with message.process():
-                    print(message.body)
-                    print("----------------------------\n\n")
-
-                    user = '-'
-                    message = 'sample text'
+                    user, message = deserialize(message.body)
                     await insert_new_message(db_conn, user, message)
 
 
