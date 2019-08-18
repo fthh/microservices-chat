@@ -19,7 +19,10 @@ async def websocket_handler(request):
     async for msg in ws:
         if msg.type == aiohttp.WSMsgType.TEXT:
             data = json.loads(msg.data)
-            await publish_new_message(data['user'], data['text'])
+            try:
+                await publish_new_message(data['user'], data['text'])
+            except ConnectionError:
+                pass
             await channel.broadcast(ws, msg.data)
 
     return ws
