@@ -2,29 +2,29 @@ import asyncio
 import sys
 from migrations import *
 from DAL.connect import create_db_connect, create_rabbit_connect
-from DAL.messages import insert_new_message
-import DAL.proto.protoc_out.message_pb2 as proto
-
-
-def deserialize(raw_data):
-    message = proto.Message()
-    message.ParseFromString(raw_data)
-    return message.user, message.message
+from DAL.messages import insert_new_message, deserialize
 
 
 async def rabbit_consumer(conn, db_conn):
+    """Rabbitmq messages handler
+
+    Args:
+        conn (aio_pika.Connection): Connection to rabbitmq.
+        db_conn (asyncpg.connect): Connection to storage database.
+
+    """
     async with conn:
-        queue_name = "inserting_messages_queue"
+        queue_name = "event.message.do"
         channel = await conn.channel()
         queue = await channel.declare_queue(
             queue_name,
             auto_delete=True
         )
         async with queue.iterator() as queue_iter:
-            async for message in queue_iter:
-                async with message.process():
-                    user, message = deserialize(message.body)
-                    await insert_new_message(db_conn, user, message)
+            async for rabbit_message in queue_iter:
+                async with rabbit_message.process():
+                    user, text_message = deserialize(rabbit_message.body)
+                    await insert_new_message(db_conn, user, text_message)
 
 
 async def run(loop):

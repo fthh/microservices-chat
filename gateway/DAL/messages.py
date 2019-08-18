@@ -3,7 +3,13 @@ from .connect import create_rabbit_connect
 import DAL.proto.protoc_out.message_pb2 as proto
 
 
-def serialize_message(user: str, text: str):
+def serialize_message(user: str, text: str) -> str:
+    """Serializing user's message to proto string
+
+    Args:
+        user (str): Username.
+        text (str): Text message.
+    """
     message = proto.Message()
     message.user = user
     message.message = text
@@ -13,7 +19,7 @@ def serialize_message(user: str, text: str):
 async def publish_new_message(user: str, message: str):
     rabbit_connect = await create_rabbit_connect()
 
-    routing_key = "inserting_messages_queue"
+    routing_key = "event.message.do"
 
     channel = await rabbit_connect.channel()
 

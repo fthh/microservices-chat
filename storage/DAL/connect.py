@@ -14,7 +14,7 @@ async def create_db_connect() -> asyncpg.connect:
     return conn
 
 
-async def create_rabbit_connect(loop):
+async def create_rabbit_connect(loop) -> aio_pika.Connection:
     conn = await aio_pika.connect_robust(
         "amqp://guest:guest@rabbit/", loop=loop
     )
