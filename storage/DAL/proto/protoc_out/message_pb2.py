@@ -20,7 +20,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='pb',
   syntax='proto2',
   serialized_options=None,
-  serialized_pb=_b('\n\rmessage.proto\x12\x02pb\"(\n\x07Message\x12\x0c\n\x04user\x18\x01 \x02(\t\x12\x0f\n\x07message\x18\x02 \x02(\t')
+  serialized_pb=_b('\n\rmessage.proto\x12\x02pb\"4\n\x07Message\x12\n\n\x02id\x18\x01 \x01(\r\x12\x0c\n\x04user\x18\x02 \x02(\t\x12\x0f\n\x07message\x18\x03 \x02(\t')
 )
 
 
@@ -34,15 +34,22 @@ _MESSAGE = _descriptor.Descriptor(
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='user', full_name='pb.Message.user', index=0,
-      number=1, type=9, cpp_type=9, label=2,
+      name='id', full_name='pb.Message.id', index=0,
+      number=1, type=13, cpp_type=3, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='user', full_name='pb.Message.user', index=1,
+      number=2, type=9, cpp_type=9, label=2,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='message', full_name='pb.Message.message', index=1,
-      number=2, type=9, cpp_type=9, label=2,
+      name='message', full_name='pb.Message.message', index=2,
+      number=3, type=9, cpp_type=9, label=2,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -60,7 +67,7 @@ _MESSAGE = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=21,
-  serialized_end=61,
+  serialized_end=73,
 )
 
 DESCRIPTOR.message_types_by_name['Message'] = _MESSAGE

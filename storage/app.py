@@ -1,8 +1,8 @@
 import asyncio
 import sys
-from migrations import *
+from migrations import db_update
 from DAL.connect import create_db_connect, create_rabbit_connect
-from DAL.messages import insert_new_message, deserialize
+from DAL.messages import insert_new_message, deserialize, alert_error_message, alert_success_message
 
 
 async def rabbit_consumer(conn, db_conn):
@@ -23,8 +23,13 @@ async def rabbit_consumer(conn, db_conn):
         async with queue.iterator() as queue_iter:
             async for rabbit_message in queue_iter:
                 async with rabbit_message.process():
-                    user, text_message = deserialize(rabbit_message.body)
-                    await insert_new_message(db_conn, user, text_message)
+                    message_id, user, text_message = deserialize(rabbit_message.body)
+                    try:
+                        await insert_new_message(db_conn, message_id, user, text_message)
+                    except Exception as e:
+                        await alert_error_message(conn, message_id, user, text_message)
+                    else:
+                        await alert_success_message(conn, message_id, user, text_message)
 
 
 async def run(loop):

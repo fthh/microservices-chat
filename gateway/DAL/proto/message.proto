@@ -2,6 +2,7 @@ syntax = "proto2";
 package pb;
 
 message Message {
-  required string user = 1;
-  required string message = 2;
+  optional uint32 id = 1;
+  required string user = 2;
+  required string message = 3;
 }
