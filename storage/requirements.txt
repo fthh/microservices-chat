@@ -1,6 +1,6 @@
 aio-pika==5.6.3
 aiormq==2.7.2
-asyncpg==0.18.3
+asyncpg==0.21.0
 idna==2.8
 multidict==4.5.2
 pamqp==2.3.0
